@@ -5,6 +5,7 @@ const app = express();
 app.use(cors());        // Avoid CORS errors in browsers
 app.use(express.json()) // Populate req.body
 
+const NOT_FOUND = -1
 const widgets = [
     { id: 1, name: "Cizzbor", price: 29.99 },
     { id: 2, name: "Woowo", price: 26.99 },
@@ -17,7 +18,7 @@ app.get('/widgets', (req, res) => {
 
 app.get('/widgets/:id', (req, res) => {
     const getIndex = widgets.findIndex(w => w.id === parseInt(req.params.id))
-    if (getIndex === -1) {
+    if (getIndex === NOT_FOUND) {
         return res.status(404).send({ error: "Widget not found" })
     }
     res.send(widgets[getIndex])
@@ -28,20 +29,18 @@ app.post('/widgets', (req, res) => {
         return res.status(400).send({ error: 'One or all params are missing' })
     }
     const newId = Math.max(...widgets.map((widget) => widget.id)) + 1
-    let newWidget = {
+    const newWidget = {
         id: newId,
         price: req.body.price,
         name: req.body.name
     }
     widgets.push(newWidget)
-    res.status(201).location('localhost:8080/widgets/' + newId).send(
-        newWidget
-    )
+    res.status(201).location('localhost:8080/widgets/' + newId).send(newWidget)
 })
 
 app.delete('/widgets/:id', (req, res) => {
     const deleteIndex = widgets.findIndex(w => w.id === parseInt(req.params.id))
-    if (deleteIndex === -1) {
+    if (deleteIndex === NOT_FOUND) {
         return res.status(404).send({ error: "Widget not found" })
     }
     widgets.splice(deleteIndex, 1)

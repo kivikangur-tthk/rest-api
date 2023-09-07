@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rest API klient</title>
+</head>
+
+<body>
+    Lol
+    <div id="widgets">
+
+    </div>
+
+    <script type="module">
+        let widgetsCache
+        if (localStorage.getItem("widgetsCache") !== null) {
+            widgetsCache = JSON.parse(localStorage.getItem("widgetsCache"))
+        } else {
+            const json = await fetch("http://localhost:8080/widgets")
+            widgetsCache = await json.json()
+        }
+        localStorage.setItem("widgetsCache", JSON.stringify(widgetsCache))
+        let resultHtml = "<div>"
+        widgetsCache.forEach(element => {
+            resultHtml += `Name: ${element.name}, Price: ${element.price}<br>`
+        })
+        resultHtml += "</div>"
+        document.getElementById("widgets").innerHTML = resultHtml
+    </script>
+</body>
+
+</html>
